@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="720.0" prefWidth="1120.0"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.bantraicay.controller.AdminDialogController">
+
+    <!-- TOP TOOLBAR + HARDWARE SIMULATION BAR -->
+    <top>
+        <VBox>
+            <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="admin-toolbar">
+                <Label text="🛠️ QUẢN TRỊ &amp; ĐỐI SOÁT HỆ THỐNG" styleClass="admin-toolbar-title"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <ComboBox fx:id="cbComPorts" prefWidth="110.0" promptText="Cổng COM"/>
+                <Button text="↻ COM" onAction="#onRefreshPortsClicked" styleClass="btn-secondary"/>
+                <Button fx:id="btnConnectCom" text="Kết nối" onAction="#onConnectComPortClicked" styleClass="btn-primary"
+                        style="-fx-padding: 7 14 7 14; -fx-font-size: 12.5px;"/>
+                <Label fx:id="lblAdminComStatus" text="Chưa nối COM" styleClass="pill-badge"/>
+                <CheckBox fx:id="chkSimulationMode" text="Giả lập ESP32" selected="true"
+                          onAction="#onToggleSimulationMode" style="-fx-text-fill: #e2e8f0; -fx-font-weight: bold;"/>
+                <Button text="🔄 Làm mới" onAction="#onRefreshAllTabsClicked" styleClass="btn-secondary"/>
+                <Button text="🚪 Đăng xuất" onAction="#onLogoutClicked" styleClass="btn-danger"/>
+            </HBox>
+
+            <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="admin-sim-bar">
+                <Label text="Test nhanh bản tin ESP32:" style="-fx-font-weight: bold; -fx-font-size: 12px;"/>
+                <Button text="+ OK (Rơi 1 dĩa)" onAction="#onSimOkClicked" styleClass="btn-secondary"
+                        style="-fx-padding: 5 10 5 10; -fx-font-size: 12px;"/>
+                <Button text="+ KẸT (Laser timeout)" onAction="#onSimJamClicked" styleClass="btn-secondary"
+                        style="-fx-padding: 5 10 5 10; -fx-font-size: 12px;"/>
+                <Button text="+ PHÁT HIỆN GIAN LẬN" onAction="#onSimFraudClicked" styleClass="btn-secondary"
+                        style="-fx-padding: 5 10 5 10; -fx-font-size: 12px;"/>
+                <Button text="+ MÔI TRƯỜNG (18.5°C / 72%)" onAction="#onSimEnvClicked" styleClass="btn-secondary"
+                        style="-fx-padding: 5 10 5 10; -fx-font-size: 12px;"/>
+                <Button text="+ QUÁ NHIỆT (28.5°C)" onAction="#onSimOverheatClicked" styleClass="btn-secondary"
+                        style="-fx-padding: 5 10 5 10; -fx-font-size: 12px;"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <Label fx:id="lblLiveTraffic" text="UART: Sẵn sàng"
+                       style="-fx-font-family: 'Consolas', monospace; -fx-font-size: 11.5px; -fx-text-fill: #334155;"/>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- 5 ADMIN SECTIONS IN TABPANE -->
+    <center>
+        <TabPane fx:id="adminTabPane" tabClosingPolicy="UNAVAILABLE">
+
+            <!-- TAB 1: TON KHO & CAU HINH -->
+            <Tab text="📦 Tồn kho &amp; Cấu hình">
+                <HBox spacing="20.0">
+                    <padding>
+                        <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+                    </padding>
+
+                    <VBox spacing="14.0" styleClass="card-panel" prefWidth="440.0" HBox.hgrow="ALWAYS">
+                        <Label text="TRẠNG THÁI KHAY HÀNG HIỆN TẠI" styleClass="section-heading"/>
+                        <Separator/>
+                        <Label fx:id="lblAdminMachineStatus" text="Trạng thái máy: READY"
+                               style="-fx-font-size: 15px; -fx-font-weight: bold;"/>
+                        <Label fx:id="lblAdminStockDisplay" text="Số lượng tồn: 10 / 15 dĩa"
+                               style="-fx-font-size: 15px;"/>
+                        <Label fx:id="lblAdminEnvDisplay" text="Nhiệt độ / Độ ẩm: 16.5 °C | 72.0 %"
+                               style="-fx-font-size: 15px;"/>
+                        <Label fx:id="lblAdminUpdatedAt" text="Cập nhật lúc: --"
+                               style="-fx-font-size: 12.5px; -fx-text-fill: #64748b;"/>
+                        <Separator/>
+                        <Button fx:id="btnClearJam" text="🔧 Xóa lỗi kẹt khay (Mở khóa -> READY)"
+                                onAction="#onClearJamStatusClicked" styleClass="btn-primary"/>
+                    </VBox>
+
+                    <VBox spacing="12.0" styleClass="card-panel" prefWidth="520.0" HBox.hgrow="ALWAYS">
+                        <Label text="CẬP NHẬT SẢN PHẨM &amp; NẠP KHO (RESTOCK)" styleClass="section-heading"/>
+                        <Separator/>
+                        <GridPane hgap="12.0" vgap="12.0">
+                            <columnConstraints>
+                                <ColumnConstraints minWidth="160.0"/>
+                                <ColumnConstraints hgrow="ALWAYS"/>
+                            </columnConstraints>
+
+                            <Label text="Tên dĩa trái cây:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtFruitName" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                            <Label text="Đơn giá (VNĐ):" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtUnitPrice" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                            <Label text="Sức chứa tối đa (dĩa):" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtMaxCapacity" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                            <Label text="Số dĩa nạp thêm (+):" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                            <TextField fx:id="txtAddStock" text="0" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                        </GridPane>
+                        <Button fx:id="btnSaveRestock" text="💾 Lưu cấu hình &amp; Nạp hàng"
+                                onAction="#onRestockClicked" styleClass="btn-confirm-money"/>
+                        <Label fx:id="lblRestockFeedback" text="" style="-fx-font-size: 13px; -fx-font-weight: bold;"/>
+                    </VBox>
+                </HBox>
+            </Tab>
+
+            <!-- TAB 2: MUA THU NGHIEM (QR + NUT DA NHAN DUOC TIEN) -->
+            <Tab text="🧪 Mua thử nghiệm (QR)">
+                <HBox spacing="20.0">
+                    <padding>
+                        <Insets top="20.0" right="20.0" bottom="20.0" left="20.0"/>
+                    </padding>
+
+                    <VBox spacing="14.0" styleClass="card-panel" prefWidth="440.0" HBox.hgrow="ALWAYS">
+                        <Label text="KIỂM THỬ LUỒNG MUA &amp; XUẤT DĨA" styleClass="section-heading"/>
+                        <Label text="Cho phép Admin tạo đơn thử nghiệm, hiện mã QR và bấm 'Đã nhận được tiền' để kiểm tra Arduino/ESP32 xuất dĩa thực tế."
+                               wrapText="true" style="-fx-text-fill: #475569;"/>
+                        <Separator/>
+
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                            <Label text="Số lượng thử nghiệm:" style="-fx-font-weight: bold;"/>
+                            <Button text="-" onAction="#onTestQtyDecClicked" styleClass="btn-qty"/>
+                            <Label fx:id="lblTestQty" text="1" styleClass="qty-value-label"/>
+                            <Button text="+" onAction="#onTestQtyIncClicked" styleClass="btn-qty"/>
+                        </HBox>
+
+                        <Label fx:id="lblTestTotal" text="Tổng tiền thử nghiệm: 25,000 VNĐ" styleClass="total-amount-label"/>
+                        <Button fx:id="btnTestShowQr" text="📱 Hiện mã QR mua thử"
+                                onAction="#onTestPurchaseQrClicked" styleClass="btn-primary"/>
+
+                        <Separator/>
+                        <ProgressBar fx:id="progressTestDispense" prefWidth="360.0" prefHeight="16.0" progress="0.0"/>
+                        <Label fx:id="lblTestStatus" text="Chưa có giao dịch thử nghiệm." wrapText="true"
+                               style="-fx-font-size: 13.5px; -fx-font-weight: bold;"/>
+                    </VBox>
+
+                    <VBox fx:id="boxTestQrPanel" alignment="CENTER" spacing="12.0" styleClass="card-panel"
+                          prefWidth="480.0" HBox.hgrow="ALWAYS">
+                        <Label text="MÃ QR THANH TOÁN THỬ NGHIỆM" styleClass="section-heading"/>
+                        <StackPane styleClass="qr-frame" maxWidth="218.0" maxHeight="218.0">
+                            <ImageView fx:id="imgTestQrCode" fitWidth="190.0" fitHeight="190.0" preserveRatio="true"/>
+                        </StackPane>
+                        <Label fx:id="lblTestOrderInfo" text="Bấm 'Hiện mã QR mua thử' ở bên trái để tạo mã QR."
+                               wrapText="true" style="-fx-font-weight: bold; -fx-text-alignment: CENTER;"/>
+                        <HBox alignment="CENTER" spacing="12.0">
+                            <Button fx:id="btnTestPaymentReceived" text="✅ Đã nhận được tiền (Xuất dĩa)"
+                                    onAction="#onTestPaymentReceivedClicked" styleClass="btn-confirm-money" disable="true"/>
+                            <Button fx:id="btnTestCancelQr" text="✖ Hủy"
+                                    onAction="#onTestCancelQrClicked" styleClass="btn-secondary" disable="true"/>
+                        </HBox>
+                    </VBox>
+                </HBox>
+            </Tab>
+
+            <!-- TAB 3: LICH SU GIAO DICH -->
+            <Tab text="🧾 Lịch sử giao dịch">
+                <VBox spacing="10.0">
+                    <padding>
+                        <Insets top="14.0" right="14.0" bottom="14.0" left="14.0"/>
+                    </padding>
+                    <Label text="LỊCH SỬ ĐƠN HÀNG (BANG ORDERS)" styleClass="section-heading"/>
+                    <TableView fx:id="tblOrderHistory" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colOrderId" text="Mã đơn hàng" prefWidth="185.0"/>
+                            <TableColumn fx:id="colOrderTime" text="Thời gian tạo" prefWidth="175.0"/>
+                            <TableColumn fx:id="colOrderUnitPrice" text="Đơn giá" prefWidth="105.0"/>
+                            <TableColumn fx:id="colOrderQtyOrdered" text="SL Đặt" prefWidth="75.0"/>
+                            <TableColumn fx:id="colOrderQtyDispensed" text="SL Laser OK" prefWidth="95.0"/>
+                            <TableColumn fx:id="colOrderTotalPaid" text="Đã thu (VNĐ)" prefWidth="120.0"/>
+                            <TableColumn fx:id="colOrderRefund" text="Hoàn trả (VNĐ)" prefWidth="120.0"/>
+                            <TableColumn fx:id="colOrderStatus" text="Trạng thái" prefWidth="130.0"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <!-- TAB 4: LOG HOAT DONG HE THONG -->
+            <Tab text="📋 Log hoạt động hệ thống">
+                <VBox spacing="10.0">
+                    <padding>
+                        <Insets top="14.0" right="14.0" bottom="14.0" left="14.0"/>
+                    </padding>
+                    <Label text="NHẬT KÝ HOẠT ĐỘNG HỆ THỐNG (ĐÃ TÁCH RIÊNG KHỎI LOG MÔI TRƯỜNG)" styleClass="section-heading"/>
+                    <TableView fx:id="tblActivityLogs" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colActId" text="ID" prefWidth="55.0"/>
+                            <TableColumn fx:id="colActSysTime" text="Giờ Laptop" prefWidth="165.0"/>
+                            <TableColumn fx:id="colActEspTime" text="Giờ ESP32" prefWidth="85.0"/>
+                            <TableColumn fx:id="colActEventType" text="Loại sự kiện" prefWidth="160.0"/>
+                            <TableColumn fx:id="colActOrderId" text="Mã đơn" prefWidth="150.0"/>
+                            <TableColumn fx:id="colActRawMsg" text="Thông điệp UART" prefWidth="200.0"/>
+                            <TableColumn fx:id="colActNote" text="Ghi chú" prefWidth="250.0"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+            <!-- TAB 5: LOG MOI TRUONG & DOI SOAT 3 BEN -->
+            <Tab text="🌡️ Log môi trường &amp; Đối soát">
+                <VBox spacing="14.0">
+                    <padding>
+                        <Insets top="14.0" right="14.0" bottom="14.0" left="14.0"/>
+                    </padding>
+
+                    <!-- RECONCILIATION SUMMARY CARD -->
+                    <VBox spacing="10.0" styleClass="card-panel">
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                            <Label text="BÁO CÁO ĐỐI SOÁT 3 BÊN (TIỀN THU - CẢM BIẾN LASER - KHO)" styleClass="section-heading"/>
+                            <Region HBox.hgrow="ALWAYS"/>
+                            <TextField fx:id="txtReconcileDate" promptText="Lọc ngày (yyyy-MM-dd) hoặc để trống" prefWidth="230.0"/>
+                            <Button text="📊 Chạy đối soát" onAction="#onLoadReconciliationClicked" styleClass="btn-primary"
+                                    style="-fx-padding: 7 14 7 14; -fx-font-size: 12.5px;"/>
+                            <Label fx:id="lblReconcileMatchBadge" text="✅ KHỚP DỮ LIỆU" styleClass="pill-ready"/>
+                        </HBox>
+
+                        <HBox spacing="12.0">
+                            <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
+                                <Label text="Tổng dĩa đã trả tiền" styleClass="metric-label"/>
+                                <Label fx:id="lblRecPaidDishes" text="0" styleClass="metric-value"/>
+                            </VBox>
+                            <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
+                                <Label text="Dĩa cắt Laser (OK)" styleClass="metric-label"/>
+                                <Label fx:id="lblRecLaserDishes" text="0" styleClass="metric-value"/>
+                            </VBox>
+                            <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
+                                <Label text="Số lần kẹt (KET)" styleClass="metric-label"/>
+                                <Label fx:id="lblRecJamCount" text="0" styleClass="metric-value"/>
+                            </VBox>
+                            <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
+                                <Label text="Cảnh báo gian lận" styleClass="metric-label"/>
+                                <Label fx:id="lblRecFraudCount" text="0" styleClass="metric-value"/>
+                            </VBox>
+                            <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
+                                <Label text="Doanh thu thực (VNĐ)" styleClass="metric-label"/>
+                                <Label fx:id="lblRecNetRevenue" text="0 đ" styleClass="metric-value"/>
+                            </VBox>
+                            <VBox styleClass="metric-card" HBox.hgrow="ALWAYS">
+                                <Label text="Tiền cần hoàn (VNĐ)" styleClass="metric-label"/>
+                                <Label fx:id="lblRecRefundAmount" text="0 đ" styleClass="metric-value"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <!-- ENVIRONMENT LOGS TABLE -->
+                    <Label text="LOG MÔI TRƯỜNG HỆ THỐNG (NHIỆT ĐỘ &amp; ĐỘ ẨM - MOITRUONG)" styleClass="section-heading"/>
+                    <TableView fx:id="tblEnvLogs" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn fx:id="colEnvId" text="ID" prefWidth="65.0"/>
+                            <TableColumn fx:id="colEnvSysTime" text="Giờ Laptop ghi nhận" prefWidth="185.0"/>
+                            <TableColumn fx:id="colEnvEspTime" text="Giờ ESP32" prefWidth="105.0"/>
+                            <TableColumn fx:id="colEnvRawMsg" text="Bản tin MOITRUONG" prefWidth="280.0"/>
+                            <TableColumn fx:id="colEnvNote" text="Chi tiết nhiệt độ / độ ẩm" prefWidth="390.0"/>
+                        </columns>
+                    </TableView>
+                </VBox>
+            </Tab>
+
+        </TabPane>
+    </center>
+
+</BorderPane>
