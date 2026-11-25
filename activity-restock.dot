@@ -1,0 +1,18 @@
+digraph RestockActivity {
+ graph [rankdir=TB, bgcolor="white", label="SCRUM-32 | Activity – Restock", labelloc=t, fontsize=18, fontname="Arial", nodesep=0.25, ranksep=0.35];
+ node [shape=box, style="rounded,filled", fillcolor="#F3F7FB", color="#315A7D", fontname="Arial", fontsize=10];
+ edge [color="#315A7D", fontname="Arial", fontsize=9];
+ Start [shape=circle, label="", width=0.2, height=0.2, fillcolor="#315A7D"];
+ Select [label="Select machine / slot / product"];
+ Input [label="Enter batch, received date, expiry date, quantity"];
+ Validate [shape=diamond, label="Valid data and slot assignment?"];
+ Reject [label="Return validation error", fillcolor="#FCECEC"];
+ Create [label="Create / identify batch"];
+ Restock [label="Create restock record"];
+ Update [label="Increase inventory_stock"];
+ Move [label="Append inventory_movement + audit"];
+ End [shape=doublecircle, label="", width=0.22, height=0.22, fillcolor="#315A7D"];
+ Start -> Select -> Input -> Validate;
+ Validate -> Reject [label="No"]; Reject -> End;
+ Validate -> Create [label="Yes"]; Create -> Restock -> Update -> Move -> End;
+}

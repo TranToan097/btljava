@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="800" viewBox="0 0 1280 800">
+<rect width="1280" height="800" fill="#F1F5F9"/>
+<rect width="1280" height="64" fill="#123B55"/>
+<text x="36" y="40" font-family="Arial" font-size="22" font-weight="bold" fill="#FFFFFF">FreshVend</text>
+<text x="1240" y="38" text-anchor="end" font-family="Arial" font-size="12" fill="#DCEAF3">TV2 – Concept wireframe</text>
+<rect x="24" y="88" width="220" height="680" rx="12" fill="#FFFFFF" stroke="#CBD5E1"/>
+<text x="48" y="126" font-family="Arial" font-size="16" font-weight="bold" fill="#123B55">Navigation</text>
+<text x="50" y="164" font-family="Arial" font-size="13" fill="#475569">Dashboard</text>
+<text x="50" y="208" font-family="Arial" font-size="13" fill="#475569">Products</text>
+<text x="50" y="252" font-family="Arial" font-size="13" fill="#475569">Inventory</text>
+<text x="50" y="296" font-family="Arial" font-size="13" fill="#475569">Machines / Slots</text>
+<text x="50" y="340" font-family="Arial" font-size="13" fill="#475569">Alerts</text>
+<text x="50" y="384" font-family="Arial" font-size="13" fill="#475569">Audit Log</text>
+<text x="50" y="428" font-family="Arial" font-size="13" fill="#475569">Users</text>
+<rect x="270" y="88" width="986" height="680" rx="12" fill="#FFFFFF" stroke="#CBD5E1"/>
+<text x="306" y="132" font-family="Arial" font-size="24" font-weight="bold" fill="#123B55">Web Sign In</text>
+<text x="306" y="158" font-family="Arial" font-size="12" fill="#64748B">Shared Auth contract for Admin and Operator</text>
+<text x="306" y="208" font-family="Arial" font-size="12" fill="#475569">Email / Username</text>
+<rect x="306" y="216" width="880" height="42" rx="8" fill="#F8FAFC" stroke="#CBD5E1"/>
+<text x="324" y="243" font-family="Arial" font-size="13" fill="#64748B">Enter account</text>
+<text x="306" y="290" font-family="Arial" font-size="12" fill="#475569">Password</text>
+<rect x="306" y="298" width="880" height="42" rx="8" fill="#F8FAFC" stroke="#CBD5E1"/>
+<text x="324" y="325" font-family="Arial" font-size="13" fill="#64748B">Enter password</text>
+<rect x="306" y="360" width="180" height="42" rx="8" fill="#0F766E"/>
+<text x="396" y="386" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#FFFFFF">SIGN IN</text>
+</svg>

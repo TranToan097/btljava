@@ -1,0 +1,10 @@
+flowchart TD
+  A([Start]) --> B[Select machine, slot and product]
+  B --> C[Enter batch, received date, expiry date and quantity]
+  C --> D{Data and slot valid?}
+  D -- No --> E[Return validation error]
+  D -- Yes --> F[Create or identify batch]
+  F --> G[Create restock record]
+  G --> H[Increase stock balance]
+  H --> I[Append movement and audit]
+  I --> J([Complete])

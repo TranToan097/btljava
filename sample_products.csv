@@ -1,0 +1,3 @@
+﻿product_id,category_code,sku,name,price_vnd,unit,low_stock_threshold,status
+1,FRUIT_BOWL,FV-FB-MANGO,Mango Fruit Bowl,35000,bowl,5,ACTIVE
+2,FRESH_CUT,FV-FC-MIX,Mixed Fresh-cut Fruit,39000,box,5,ACTIVE

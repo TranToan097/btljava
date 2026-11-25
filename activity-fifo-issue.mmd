@@ -1,0 +1,12 @@
+flowchart TD
+  A([Start]) --> B[Receive product, slot and quantity]
+  B --> C[Lock eligible stock rows]
+  C --> D[Filter positive, AVAILABLE and unexpired batches]
+  D --> E[Sort received date, expiry date, batch ID]
+  E --> F[Allocate from oldest eligible batch]
+  F --> G{Quantity satisfied?}
+  G -- Yes --> H[Save decrements and movement rows]
+  G -- No, more batches --> F
+  G -- No more stock --> I[Rollback transaction]
+  H --> J([Success])
+  I --> K([Insufficient stock])

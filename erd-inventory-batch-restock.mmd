@@ -1,0 +1,10 @@
+erDiagram
+  PRODUCT ||--o{ INVENTORY_BATCH : has
+  INVENTORY_BATCH ||--o{ INVENTORY_STOCK : stored_as
+  MACHINE_SLOT ||--o{ INVENTORY_STOCK : contains
+  INVENTORY_BATCH ||--o{ RESTOCK : received_by
+  PRODUCT { bigint product_id PK; string sku UK }
+  INVENTORY_BATCH { bigint batch_id PK; bigint product_id FK; string batch_code; date received_date; date expiry_date }
+  INVENTORY_STOCK { bigint stock_id PK; bigint batch_id FK; bigint product_id FK; bigint slot_id FK; int quantity_on_hand }
+  RESTOCK { bigint restock_id PK; bigint batch_id FK; bigint slot_id FK; int quantity }
+  MACHINE_SLOT { bigint slot_id PK; bigint machine_id FK; string slot_code }

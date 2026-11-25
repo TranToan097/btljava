@@ -1,0 +1,15 @@
+digraph BatchState {
+ graph [rankdir=LR, bgcolor="white", label="SCRUM-33 | Batch State Diagram", labelloc=t, fontsize=18, fontname="Arial", nodesep=0.4, ranksep=0.55];
+ node [shape=box, style="rounded,filled", fillcolor="#F3F7FB", color="#315A7D", fontname="Arial", fontsize=10];
+ edge [color="#315A7D", fontname="Arial", fontsize=9];
+ Pending [label="PENDING"]; Available [label="AVAILABLE"];
+ Quarantine [label="QUARANTINED"]; Expired [label="EXPIRED", fillcolor="#FCECEC"];
+ Depleted [label="DEPLETED"]; Disposed [label="DISPOSED"]; Rejected [label="REJECTED"];
+ Pending -> Available [label="receiving accepted"];
+ Pending -> Rejected [label="receiving rejected"];
+ Available -> Expired [label="expiry date passed"];
+ Available -> Depleted [label="stock = 0"];
+ Available -> Quarantine [label="hold / excursion review"];
+ Quarantine -> Available [label="authorized release"];
+ Quarantine -> Disposed [label="disposal approved"];
+}

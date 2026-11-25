@@ -1,0 +1,640 @@
+openapi: 3.1.0
+info:
+  title: FreshVend Product and Inventory API
+  version: 1.0.0
+  description: >
+    TV2 contract for Product, Inventory, Batch, Restock and Machine/Slot.
+    Authentication is supplied by the shared TV1 JWT/RBAC module.
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development
+tags:
+  - name: Categories
+  - name: Products
+  - name: Inventory
+  - name: Restock
+  - name: Machines
+  - name: Slots
+  - name: Alerts
+  - name: Audit
+security:
+  - bearerAuth: []
+paths:
+  /categories:
+    get:
+      tags: [Categories]
+      summary: List product categories
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+        - name: status
+          in: query
+          schema: { type: string, enum: [ACTIVE, INACTIVE] }
+      responses:
+        '200':
+          description: Category list
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CategoryPageResponse' }
+    post:
+      tags: [Categories]
+      summary: Create category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CategoryRequest' }
+      responses:
+        '201':
+          description: Category created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CategoryResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /products:
+    get:
+      tags: [Products]
+      summary: Search products
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+        - name: keyword
+          in: query
+          schema: { type: string }
+        - name: categoryId
+          in: query
+          schema: { type: integer, format: int64 }
+        - name: status
+          in: query
+          schema: { type: string, enum: [ACTIVE, INACTIVE, DISCONTINUED] }
+      responses:
+        '200':
+          description: Product page
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProductPageResponse' }
+    post:
+      tags: [Products]
+      summary: Create product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProductRequest' }
+      responses:
+        '201':
+          description: Product created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProductResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /products/{productId}:
+    parameters:
+      - name: productId
+        in: path
+        required: true
+        schema: { type: integer, format: int64 }
+    get:
+      tags: [Products]
+      summary: Get product detail
+      responses:
+        '200':
+          description: Product detail
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProductResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    patch:
+      tags: [Products]
+      summary: Update product fields or status
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProductUpdateRequest' }
+      responses:
+        '200':
+          description: Product updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProductResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+  /inventory/stock:
+    get:
+      tags: [Inventory]
+      summary: View stock by product, machine, slot and batch
+      parameters:
+        - name: productId
+          in: query
+          schema: { type: integer, format: int64 }
+        - name: machineId
+          in: query
+          schema: { type: integer, format: int64 }
+        - name: slotId
+          in: query
+          schema: { type: integer, format: int64 }
+        - name: batchId
+          in: query
+          schema: { type: integer, format: int64 }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+      responses:
+        '200':
+          description: Inventory stock page
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/StockPageResponse' }
+  /inventory/batches:
+    get:
+      tags: [Inventory]
+      summary: Search batches and expiry state
+      parameters:
+        - name: productId
+          in: query
+          schema: { type: integer, format: int64 }
+        - name: expiryState
+          in: query
+          schema: { type: string, enum: [VALID, NEAR_EXPIRY, EXPIRED] }
+        - name: asOfDate
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+      responses:
+        '200':
+          description: Batch page
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BatchPageResponse' }
+  /inventory/restocks:
+    post:
+      tags: [Restock]
+      summary: Record a restock operation
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RestockRequest' }
+      responses:
+        '201':
+          description: Restock recorded
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RestockResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /inventory/issues:
+    post:
+      tags: [Inventory]
+      summary: Allocate inventory using FIFO
+      description: >
+        Atomic issue. Eligible batches are not expired and have positive stock.
+        Allocation order is receivedDate ascending, then expiryDate and batchId.
+      parameters:
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/IssueRequest' }
+      responses:
+        '200':
+          description: Inventory allocated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/IssueResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: Insufficient eligible stock
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '422': { $ref: '#/components/responses/RuleViolation' }
+  /machines:
+    get:
+      tags: [Machines]
+      summary: List machines
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+        - name: locationId
+          in: query
+          schema: { type: integer, format: int64 }
+      responses:
+        '200':
+          description: Machine page
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MachinePageResponse' }
+  /machines/{machineId}/slots:
+    get:
+      tags: [Slots]
+      summary: List slots of a machine
+      parameters:
+        - name: machineId
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      responses:
+        '200':
+          description: Slot list
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SlotListResponse' }
+  /machines/{machineId}/slots/{slotId}/assignment:
+    put:
+      tags: [Slots]
+      summary: Assign a product to a machine slot
+      parameters:
+        - name: machineId
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+        - name: slotId
+          in: path
+          required: true
+          schema: { type: integer, format: int64 }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SlotAssignmentRequest' }
+      responses:
+        '200':
+          description: Slot assignment updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SlotResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409': { $ref: '#/components/responses/Conflict' }
+  /inventory/alerts:
+    get:
+      tags: [Alerts]
+      summary: List inventory alerts
+      parameters:
+        - name: alertType
+          in: query
+          schema: { type: string, enum: [LOW_STOCK, NEAR_EXPIRY, EXPIRED_BATCH] }
+        - name: status
+          in: query
+          schema: { type: string, enum: [OPEN, ACKNOWLEDGED, RESOLVED] }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+      responses:
+        '200':
+          description: Alert page
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AlertPageResponse' }
+  /audit-logs:
+    get:
+      tags: [Audit]
+      summary: Search operator audit history
+      parameters:
+        - name: actorId
+          in: query
+          schema: { type: string }
+        - name: entityType
+          in: query
+          schema: { type: string }
+        - name: entityId
+          in: query
+          schema: { type: string }
+        - name: from
+          in: query
+          schema: { type: string, format: date-time }
+        - name: to
+          in: query
+          schema: { type: string, format: date-time }
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Size'
+      responses:
+        '200':
+          description: Audit log page
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuditPageResponse' }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    Page:
+      name: page
+      in: query
+      schema: { type: integer, minimum: 0, default: 0 }
+    Size:
+      name: size
+      in: query
+      schema: { type: integer, minimum: 1, maximum: 100, default: 20 }
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: false
+      description: Recommended for safe retries; final implementation is shared with TV1.
+      schema: { type: string, maxLength: 120 }
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    Conflict:
+      description: Business conflict
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    RuleViolation:
+      description: Business rule violation
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+  schemas:
+    Meta:
+      type: object
+      properties:
+        timestamp: { type: string, format: date-time }
+        traceId: { type: string }
+        page: { type: integer }
+        size: { type: integer }
+        totalElements: { type: integer, format: int64 }
+        totalPages: { type: integer }
+    ErrorDetail:
+      type: object
+      properties:
+        field: { type: string }
+        reason: { type: string }
+    ErrorBody:
+      type: object
+      required: [code, message]
+      properties:
+        code: { type: string }
+        message: { type: string }
+        details:
+          type: array
+          items: { $ref: '#/components/schemas/ErrorDetail' }
+    ErrorResponse:
+      type: object
+      required: [success, error, meta]
+      properties:
+        success: { const: false }
+        error: { $ref: '#/components/schemas/ErrorBody' }
+        meta: { $ref: '#/components/schemas/Meta' }
+    Category:
+      type: object
+      properties:
+        categoryId: { type: integer, format: int64 }
+        code: { type: string }
+        name: { type: string }
+        status: { type: string, enum: [ACTIVE, INACTIVE] }
+    CategoryRequest:
+      type: object
+      required: [code, name]
+      properties:
+        code: { type: string, maxLength: 40 }
+        name: { type: string, maxLength: 120 }
+        description: { type: string }
+    CategoryResponse:
+      type: object
+      properties:
+        success: { const: true }
+        data: { $ref: '#/components/schemas/Category' }
+        meta: { $ref: '#/components/schemas/Meta' }
+    CategoryPageResponse:
+      type: object
+      properties:
+        success: { const: true }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Category' }
+        meta: { $ref: '#/components/schemas/Meta' }
+    Product:
+      type: object
+      properties:
+        productId: { type: integer, format: int64 }
+        sku: { type: string }
+        name: { type: string }
+        categoryId: { type: integer, format: int64 }
+        price: { type: number, format: double, exclusiveMinimum: 0 }
+        unit: { type: string }
+        status: { type: string, enum: [ACTIVE, INACTIVE, DISCONTINUED] }
+        lowStockThreshold: { type: integer, minimum: 0 }
+    ProductRequest:
+      type: object
+      required: [sku, name, categoryId, price, unit]
+      properties:
+        sku: { type: string, maxLength: 50 }
+        name: { type: string, maxLength: 160 }
+        categoryId: { type: integer, format: int64 }
+        description: { type: string }
+        price: { type: number, exclusiveMinimum: 0 }
+        unit: { type: string, maxLength: 30 }
+        lowStockThreshold: { type: integer, minimum: 0, default: 5 }
+    ProductUpdateRequest:
+      type: object
+      properties:
+        name: { type: string, maxLength: 160 }
+        description: { type: string }
+        price: { type: number, exclusiveMinimum: 0 }
+        status: { type: string, enum: [ACTIVE, INACTIVE, DISCONTINUED] }
+        lowStockThreshold: { type: integer, minimum: 0 }
+    ProductResponse:
+      type: object
+      properties:
+        success: { const: true }
+        data: { $ref: '#/components/schemas/Product' }
+        meta: { $ref: '#/components/schemas/Meta' }
+    ProductPageResponse:
+      type: object
+      properties:
+        success: { const: true }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Product' }
+        meta: { $ref: '#/components/schemas/Meta' }
+    StockItem:
+      type: object
+      properties:
+        productId: { type: integer, format: int64 }
+        batchId: { type: integer, format: int64 }
+        batchCode: { type: string }
+        machineId: { type: integer, format: int64 }
+        slotId: { type: integer, format: int64 }
+        slotCode: { type: string }
+        quantityOnHand: { type: integer, minimum: 0 }
+        expiryDate: { type: string, format: date }
+    StockPageResponse:
+      type: object
+      properties:
+        success: { const: true }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/StockItem' }
+        meta: { $ref: '#/components/schemas/Meta' }
+    Batch:
+      type: object
+      properties:
+        batchId: { type: integer, format: int64 }
+        productId: { type: integer, format: int64 }
+        batchCode: { type: string }
+        receivedDate: { type: string, format: date }
+        expiryDate: { type: string, format: date }
+        initialQuantity: { type: integer }
+        status: { type: string }
+    BatchPageResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Batch' }
+        meta: { $ref: '#/components/schemas/Meta' }
+    RestockRequest:
+      type: object
+      required: [productId, batchCode, receivedDate, expiryDate, slotId, quantity]
+      properties:
+        productId: { type: integer, format: int64 }
+        batchCode: { type: string }
+        receivedDate: { type: string, format: date }
+        expiryDate: { type: string, format: date }
+        slotId: { type: integer, format: int64 }
+        quantity: { type: integer, minimum: 1 }
+        note: { type: string }
+    RestockResult:
+      type: object
+      properties:
+        restockId: { type: integer, format: int64 }
+        batchId: { type: integer, format: int64 }
+        quantityAdded: { type: integer }
+        slotId: { type: integer, format: int64 }
+    RestockResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data: { $ref: '#/components/schemas/RestockResult' }
+        meta: { $ref: '#/components/schemas/Meta' }
+    IssueRequest:
+      type: object
+      required: [productId, slotId, quantity, referenceId]
+      properties:
+        productId: { type: integer, format: int64 }
+        slotId: { type: integer, format: int64 }
+        quantity: { type: integer, minimum: 1 }
+        asOfDate: { type: string, format: date }
+        referenceId: { type: string }
+    Allocation:
+      type: object
+      properties:
+        batchId: { type: integer, format: int64 }
+        batchCode: { type: string }
+        quantity: { type: integer }
+    IssueResult:
+      type: object
+      properties:
+        productId: { type: integer, format: int64 }
+        slotId: { type: integer, format: int64 }
+        requestedQuantity: { type: integer }
+        allocations:
+          type: array
+          items: { $ref: '#/components/schemas/Allocation' }
+    IssueResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data: { $ref: '#/components/schemas/IssueResult' }
+        meta: { $ref: '#/components/schemas/Meta' }
+    Machine:
+      type: object
+      properties:
+        machineId: { type: integer, format: int64 }
+        machineCode: { type: string }
+        locationId: { type: integer, format: int64 }
+        status: { type: string }
+    MachinePageResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Machine' }
+        meta: { $ref: '#/components/schemas/Meta' }
+    Slot:
+      type: object
+      properties:
+        slotId: { type: integer, format: int64 }
+        machineId: { type: integer, format: int64 }
+        slotCode: { type: string }
+        productId: { type: integer, format: int64, nullable: true }
+        capacity: { type: integer }
+        status: { type: string }
+    SlotListResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Slot' }
+        meta: { $ref: '#/components/schemas/Meta' }
+    SlotAssignmentRequest:
+      type: object
+      required: [productId]
+      properties:
+        productId: { type: integer, format: int64 }
+    SlotResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data: { $ref: '#/components/schemas/Slot' }
+        meta: { $ref: '#/components/schemas/Meta' }
+    Alert:
+      type: object
+      properties:
+        alertId: { type: integer, format: int64 }
+        alertType: { type: string }
+        severity: { type: string }
+        productId: { type: integer, format: int64 }
+        batchId: { type: integer, format: int64 }
+        slotId: { type: integer, format: int64 }
+        message: { type: string }
+        status: { type: string }
+        createdAt: { type: string, format: date-time }
+    AlertPageResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/Alert' }
+        meta: { $ref: '#/components/schemas/Meta' }
+    AuditLog:
+      type: object
+      properties:
+        auditId: { type: integer, format: int64 }
+        actorId: { type: string }
+        action: { type: string }
+        entityType: { type: string }
+        entityId: { type: string }
+        reason: { type: string }
+        createdAt: { type: string, format: date-time }
+    AuditPageResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: array
+          items: { $ref: '#/components/schemas/AuditLog' }
+        meta: { $ref: '#/components/schemas/Meta' }

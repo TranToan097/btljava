@@ -1,0 +1,16 @@
+digraph SlotState {
+ graph [rankdir=LR, bgcolor="white", label="SCRUM-33 | Slot State Diagram", labelloc=t, fontsize=18, fontname="Arial", nodesep=0.4, ranksep=0.55];
+ node [shape=box, style="rounded,filled", fillcolor="#F3F7FB", color="#315A7D", fontname="Arial", fontsize=10];
+ edge [color="#315A7D", fontname="Arial", fontsize=9];
+ Empty [label="EMPTY"]; Assigned [label="ASSIGNED"]; Stocked [label="STOCKED"];
+ Low [label="LOW_STOCK", fillcolor="#FFF4D6"];
+ Maintenance [label="MAINTENANCE"]; Fault [label="FAULT", fillcolor="#FCECEC"];
+ Empty -> Assigned [label="assign product"];
+ Assigned -> Stocked [label="restock"];
+ Stocked -> Low [label="quantity <= threshold"];
+ Low -> Stocked [label="restock"];
+ Assigned -> Empty [label="unassign"];
+ Stocked -> Maintenance [label="maintenance request"];
+ Maintenance -> Assigned [label="maintenance complete"];
+ Fault -> Maintenance [label="operator escalation"];
+}

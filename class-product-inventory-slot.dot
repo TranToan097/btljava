@@ -1,0 +1,15 @@
+digraph ClassDiagram {
+ graph [rankdir=LR, bgcolor="white", label="NEW-18B-2 | Class Diagram – Product / Inventory / Slot", labelloc=t, fontsize=18, fontname="Arial", nodesep=0.5, ranksep=0.75];
+ node [shape=record, style="rounded,filled", fillcolor="#F3F7FB", color="#315A7D", fontname="Arial", fontsize=9];
+ edge [color="#315A7D", fontname="Arial", fontsize=8];
+ Category [label="{ProductCategory|categoryId\\lcategoryCode\\lname\\l|create()\\lupdateStatus()\\l}"];
+ Product [label="{Product|productId\\lsku\\lname\\lprice\\lstatus\\l|create()\\lupdatePrice()\\ldeactivate()\\l}"];
+ Batch [label="{InventoryBatch|batchId\\lbatchCode\\lreceivedDate\\lexpiryDate\\lstatus\\l|isExpired(asOf)\\l}"];
+ Stock [label="{InventoryStock|stockId\\lquantityOnHand\\lversion\\l|increase(qty)\\ldecrease(qty)\\l}"];
+ Slot [label="{MachineSlot|slotId\\lslotCode\\lcapacity\\lstatus\\l|assignProduct()\\l}"];
+ Restock [label="{Restock|restockId\\lquantity\\lreceivedAt\\l|confirm()\\l}"];
+ Movement [label="{InventoryMovement|movementId\\lmovementType\\lquantityDelta\\lcreatedAt\\l|record()\\l}"];
+ Category -> Product [label="1..*"]; Product -> Batch [label="1..*"];
+ Batch -> Stock [label="1..*"]; Slot -> Stock [label="1..*"];
+ Batch -> Restock [label="1..*"]; Stock -> Movement [label="history"];
+}

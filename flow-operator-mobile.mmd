@@ -1,0 +1,16 @@
+flowchart TD
+  A([Open Operator App]) --> B[Sign in through shared Auth]
+  B --> C{Authenticated?}
+  C -- No --> D[Show sign-in error]
+  C -- Yes --> E[Operator dashboard]
+  E --> F{Choose task}
+  F --> G[View inventory / alerts]
+  F --> H[Record restock]
+  F --> I[Update price]
+  F --> J[Assign product to slot]
+  F --> K[View machine / temperature / door history]
+  H --> L[Validate and confirm]
+  I --> L
+  J --> L
+  L --> M[Call TV2 API and write audit]
+  M --> E

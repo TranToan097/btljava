@@ -1,0 +1,8 @@
+digraph ERD_Product {
+ graph [rankdir=LR, bgcolor="white", label="SCRUM-30 | Product / Category ERD", labelloc=t, fontsize=20, fontname="Arial", nodesep=0.7, ranksep=1.0];
+ node [shape=record, style="rounded,filled", fillcolor="#F3F7FB", color="#315A7D", fontname="Arial", fontsize=10];
+ edge [color="#315A7D", fontname="Arial", fontsize=9];
+ Category [label="{product_category|PK category_id\\lUK category_code\\lname\\lstatus\\l}"];
+ Product [label="{product|PK product_id\\lFK category_id\\lUK sku\\lname\\lprice, unit\\lstatus\\l}"];
+ Category -> Product [label="1 : N"];
+}

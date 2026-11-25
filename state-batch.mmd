@@ -1,0 +1,9 @@
+stateDiagram-v2
+  [*] --> PENDING
+  PENDING --> AVAILABLE: receiving accepted
+  PENDING --> REJECTED: receiving rejected
+  AVAILABLE --> EXPIRED: expiry date passed
+  AVAILABLE --> DEPLETED: stock reaches zero
+  AVAILABLE --> QUARANTINED: hold / excursion review
+  QUARANTINED --> AVAILABLE: authorized release
+  QUARANTINED --> DISPOSED: disposal approved

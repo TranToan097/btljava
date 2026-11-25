@@ -1,0 +1,12 @@
+digraph ERD_Machine {
+ graph [rankdir=LR, bgcolor="white", label="NEW-11 | Machine / Location / Slot / Audit ERD", labelloc=t, fontsize=20, fontname="Arial", nodesep=0.7, ranksep=0.9];
+ node [shape=record, style="rounded,filled", fillcolor="#F3F7FB", color="#315A7D", fontname="Arial", fontsize=10];
+ edge [color="#315A7D", fontname="Arial", fontsize=9];
+ Location [label="{machine_location|PK location_id\\lUK location_code\\lname\\laddress\\l}"];
+ Machine [label="{vending_machine|PK machine_id\\lFK location_id\\lUK machine_code\\lstatus\\l}"];
+ Slot [label="{machine_slot|PK slot_id\\lFK machine_id\\lFK product_id\\lslot_code\\lcapacity\\lstatus\\l}"];
+ Audit [label="{audit_log|PK audit_id\\lactor_id\\laction\\lentity_type/id\\lold/new JSONB\\lcreated_at\\l}"];
+ Location -> Machine [label="1 : N"];
+ Machine -> Slot [label="1 : N"];
+ Audit -> Slot [style=dashed, label="generic entity reference"];
+}

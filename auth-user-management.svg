@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="800" viewBox="0 0 1280 800">
+<rect width="1280" height="800" fill="#F1F5F9"/>
+<rect width="1280" height="64" fill="#123B55"/>
+<text x="36" y="40" font-family="Arial" font-size="22" font-weight="bold" fill="#FFFFFF">FreshVend</text>
+<text x="1240" y="38" text-anchor="end" font-family="Arial" font-size="12" fill="#DCEAF3">TV2 – Concept wireframe</text>
+<rect x="24" y="88" width="220" height="680" rx="12" fill="#FFFFFF" stroke="#CBD5E1"/>
+<text x="48" y="126" font-family="Arial" font-size="16" font-weight="bold" fill="#123B55">Navigation</text>
+<text x="50" y="164" font-family="Arial" font-size="13" fill="#475569">Dashboard</text>
+<text x="50" y="208" font-family="Arial" font-size="13" fill="#475569">Products</text>
+<text x="50" y="252" font-family="Arial" font-size="13" fill="#475569">Inventory</text>
+<text x="50" y="296" font-family="Arial" font-size="13" fill="#475569">Machines / Slots</text>
+<text x="50" y="340" font-family="Arial" font-size="13" fill="#475569">Alerts</text>
+<text x="50" y="384" font-family="Arial" font-size="13" fill="#475569">Audit Log</text>
+<text x="50" y="428" font-family="Arial" font-size="13" fill="#475569">Users</text>
+<rect x="270" y="88" width="986" height="680" rx="12" fill="#FFFFFF" stroke="#CBD5E1"/>
+<text x="306" y="132" font-family="Arial" font-size="24" font-weight="bold" fill="#123B55">User and Role Management</text>
+<text x="306" y="158" font-family="Arial" font-size="12" fill="#64748B">NEW-10 wireframe – user administration concept</text>
+<rect x="306" y="196" width="420" height="86" rx="10" fill="#F8FAFC" stroke="#CBD5E1"/>
+<text x="326" y="228" font-family="Arial" font-size="14" font-weight="bold" fill="#1E293B">Users</text>
+<text x="326" y="252" font-family="Arial" font-size="12" fill="#64748B">Search, filter by status and role</text>
+<rect x="306" y="300" width="420" height="86" rx="10" fill="#F8FAFC" stroke="#CBD5E1"/>
+<text x="326" y="332" font-family="Arial" font-size="14" font-weight="bold" fill="#1E293B">Roles</text>
+<text x="326" y="356" font-family="Arial" font-size="12" fill="#64748B">Admin • Operator • read-only scopes</text>
+<text x="306" y="416" font-family="Arial" font-size="12" fill="#475569">Search user</text>
+<rect x="306" y="424" width="880" height="42" rx="8" fill="#F8FAFC" stroke="#CBD5E1"/>
+<text x="324" y="451" font-family="Arial" font-size="13" fill="#64748B">Name / email / status</text>
+<rect x="306" y="486" width="880" height="190" rx="8" fill="#F8FAFC" stroke="#CBD5E1"/>
+<text x="326" y="514" font-family="Arial" font-size="13" font-weight="bold" fill="#1E293B">User list</text>
+<text x="326" y="544" font-family="Arial" font-size="11" fill="#64748B">Name | Email | Role | Status | Last sign-in | Actions</text>
+<line x1="326" y1="572" x2="1164" y2="572" stroke="#E2E8F0"/>
+<line x1="326" y1="600" x2="1164" y2="600" stroke="#E2E8F0"/>
+<line x1="326" y1="628" x2="1164" y2="628" stroke="#E2E8F0"/>
+<line x1="326" y1="656" x2="1164" y2="656" stroke="#E2E8F0"/>
+<rect x="306" y="694" width="180" height="42" rx="8" fill="#0F766E"/>
+<text x="396" y="720" text-anchor="middle" font-family="Arial" font-size="13" font-weight="bold" fill="#FFFFFF">CREATE USER</text>
+</svg>

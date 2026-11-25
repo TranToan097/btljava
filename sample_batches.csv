@@ -1,0 +1,4 @@
+﻿batch_id,product_id,batch_code,received_date,expiry_date,initial_quantity,status
+1,1,MANGO-20261120-A,2026-11-20,2026-11-26,10,AVAILABLE
+2,1,MANGO-20261122-B,2026-11-22,2026-11-28,15,AVAILABLE
+3,2,MIX-20261123-A,2026-11-23,2026-11-27,8,AVAILABLE

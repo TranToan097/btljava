@@ -1,0 +1,8 @@
+flowchart TD
+  A([Open Web or Mobile App]) --> B[Enter account and password]
+  B --> C[TV1 Auth validates credentials]
+  C --> D{Valid and active?}
+  D -- No --> E[Display access error]
+  D -- Yes --> F[Issue/refresh JWT]
+  F --> G[Load role-based navigation]
+  G --> H[User management is Admin-only]

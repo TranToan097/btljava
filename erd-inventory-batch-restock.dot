@@ -1,0 +1,17 @@
+digraph ERD_Inventory {
+ graph [rankdir=LR, bgcolor="white", label="SCRUM-31 | Inventory / Batch / Restock ERD", labelloc=t, fontsize=20, fontname="Arial", nodesep=0.55, ranksep=0.8];
+ node [shape=record, style="rounded,filled", fillcolor="#F3F7FB", color="#315A7D", fontname="Arial", fontsize=9];
+ edge [color="#315A7D", fontname="Arial", fontsize=8];
+ Product [label="{product|PK product_id\\lUK sku\\lname\\l}"];
+ Batch [label="{inventory_batch|PK batch_id\\lFK product_id\\lbatch_code\\lreceived_date\\lexpiry_date\\l}"];
+ Stock [label="{inventory_stock|PK stock_id\\lFK batch_id\\lFK product_id\\lFK slot_id\\lquantity_on_hand\\l}"];
+ Restock [label="{restock|PK restock_id\\lUK restock_code\\lFK batch_id\\lFK product_id\\lFK slot_id\\lquantity\\l}"];
+ Movement [label="{inventory_movement|PK movement_id\\lFK batch_id/product_id\\lFK slot_id/product_id\\lmovement_type\\lquantity_delta\\l}"];
+ Slot [label="{machine_slot|PK slot_id\\lFK machine_id\\lproduct_id\\lslot_code\\l}"];
+ Product -> Batch [label="1 : N"];
+ Batch -> Stock [label="1 : N"];
+ Slot -> Stock [label="1 : N"];
+ Batch -> Restock [label="1 : N"];
+ Slot -> Restock [label="1 : N"];
+ Stock -> Movement [label="movement history"];
+}

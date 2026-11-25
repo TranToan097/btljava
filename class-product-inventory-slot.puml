@@ -1,0 +1,16 @@
+@startuml
+skinparam classAttributeIconSize 0
+class ProductCategory { +Long categoryId; +String categoryCode; +String name }
+class Product { +Long productId; +String sku; +String name; +BigDecimal price; +updatePrice(); +deactivate() }
+class InventoryBatch { +Long batchId; +String batchCode; +LocalDate receivedDate; +LocalDate expiryDate; +isExpired(asOf) }
+class InventoryStock { +Long stockId; +int quantityOnHand; +long version; +increase(qty); +decrease(qty) }
+class MachineSlot { +Long slotId; +String slotCode; +int capacity; +assignProduct() }
+class Restock { +Long restockId; +int quantity; +Instant receivedAt }
+class InventoryMovement { +Long movementId; +String movementType; +int quantityDelta; +Instant createdAt }
+ProductCategory "1" -- "0..*" Product
+Product "1" -- "0..*" InventoryBatch
+InventoryBatch "1" -- "0..*" InventoryStock
+MachineSlot "1" -- "0..*" InventoryStock
+InventoryBatch "1" -- "0..*" Restock
+InventoryStock "1" -- "0..*" InventoryMovement
+@enduml

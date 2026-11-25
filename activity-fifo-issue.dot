@@ -1,0 +1,20 @@
+digraph FifoActivity {
+ graph [rankdir=TB, bgcolor="white", label="SCRUM-33 | Activity – FIFO Issue", labelloc=t, fontsize=18, fontname="Arial", nodesep=0.25, ranksep=0.35];
+ node [shape=box, style="rounded,filled", fillcolor="#F3F7FB", color="#315A7D", fontname="Arial", fontsize=10];
+ edge [color="#315A7D", fontname="Arial", fontsize=9];
+ Start [shape=circle, label="", width=0.2, height=0.2, fillcolor="#315A7D"];
+ Request [label="Receive product, slot and requested quantity"];
+ Lock [label="Lock eligible stock rows"];
+ Filter [label="Filter positive stock, AVAILABLE and not expired"];
+ Sort [label="Sort received_date ASC, expiry_date ASC, batch_id ASC"];
+ Allocate [label="Allocate from oldest eligible batch"];
+ Enough [shape=diamond, label="Requested quantity satisfied?"];
+ Next [label="Continue to next eligible batch"];
+ Fail [label="Rollback and return insufficient stock", fillcolor="#FCECEC"];
+ Save [label="Save decrements + movement rows"];
+ End [shape=doublecircle, label="", width=0.22, height=0.22, fillcolor="#315A7D"];
+ Start -> Request -> Lock -> Filter -> Sort -> Allocate -> Enough;
+ Enough -> Save [label="Yes"]; Enough -> Next [label="No, more batches"];
+ Next -> Allocate; Enough -> Fail [label="No more stock"];
+ Fail -> End; Save -> End;
+}

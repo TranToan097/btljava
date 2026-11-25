@@ -1,0 +1,19 @@
+digraph UseCase {
+ graph [rankdir=LR, bgcolor="white", label="NEW-18A-2 | Use Case – Product / Inventory / Operator", labelloc=t, fontsize=18, fontname="Arial", nodesep=0.4, ranksep=0.8];
+ node [fontname="Arial", fontsize=9]; edge [color="#58728A"];
+ Admin [shape=box, style="rounded,filled", fillcolor="#E8F1F8", label="Admin"];
+ Operator [shape=box, style="rounded,filled", fillcolor="#E8F1F8", label="Operator"];
+ subgraph cluster_system {
+  label="FreshVend – TV2 module"; color="#315A7D"; style="rounded";
+  UC1 [shape=ellipse, label="Manage products / categories"];
+  UC2 [shape=ellipse, label="View inventory by slot"];
+  UC3 [shape=ellipse, label="Manage batch / expiry"];
+  UC4 [shape=ellipse, label="Record restock"];
+  UC5 [shape=ellipse, label="Issue stock using FIFO"];
+  UC6 [shape=ellipse, label="Assign product to slot"];
+  UC7 [shape=ellipse, label="Update price"];
+  UC8 [shape=ellipse, label="View alerts / audit"];
+ }
+ Admin -> UC1; Admin -> UC2; Admin -> UC3; Admin -> UC8;
+ Operator -> UC2; Operator -> UC4; Operator -> UC5; Operator -> UC6; Operator -> UC7; Operator -> UC8;
+}
